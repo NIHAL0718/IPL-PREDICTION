@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import pickle
+import joblib
 import pandas as pd
 import os
 import sys
@@ -8,22 +8,28 @@ import sys
 app = Flask(__name__)
 CORS(app)  # Enable CORS
 
-# Determine model path reliably
+# -----------------------------
+# Model Path
+# -----------------------------
 MODEL_DIR = os.path.join(os.path.dirname(__file__), 'models')
-MODEL_PATH = os.path.join(MODEL_DIR, 'pipe.pkl')
+MODEL_PATH = os.path.join(MODEL_DIR, 'pipe_joblib.pkl')  # <-- updated to joblib
 print(f"Current working directory: {os.getcwd()}")
 print(f"Model path: {MODEL_PATH}")
 print(f"Model exists: {os.path.exists(MODEL_PATH)}")
 
-# Load the model
+# -----------------------------
+# Load the model using joblib
+# -----------------------------
 try:
-    with open(MODEL_PATH, 'rb') as f:
-        lr_model = pickle.load(f)
+    lr_model = joblib.load(MODEL_PATH)
     print("Model loaded successfully")
 except Exception as e:
     print(f"Error loading model: {e}")
     sys.exit(1)  # Exit if model cannot be loaded
 
+# -----------------------------
+# Routes
+# -----------------------------
 @app.route('/', methods=['GET'])
 def home():
     return jsonify({
@@ -47,10 +53,6 @@ def predict():
         balls_left = data.get('balls_left')
         wickets_remaining = data.get('wickets_remaining')
         total_run_x = data.get('total_run_x')
-
-        print(f"Extracted values: batting_team={batting_team}, bowling_team={bowling_team}, "
-              f"city={city}, runs_left={runs_left}, balls_left={balls_left}, "
-              f"wickets_remaining={wickets_remaining}, total_run_x={total_run_x}")
 
         # Validate input
         if any(v is None for v in [batting_team, bowling_team, city, runs_left, balls_left, wickets_remaining, total_run_x]):
@@ -121,7 +123,9 @@ def predict():
         print(f"Error during prediction: {e}")
         return jsonify({'error': str(e)}), 500
 
+# -----------------------------
+# Run app
+# -----------------------------
 if __name__ == '__main__':
-    # Use PORT environment variable for deployment platforms (like Render)
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
