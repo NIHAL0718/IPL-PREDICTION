@@ -122,25 +122,26 @@
     <p>Don't have an account? <a href="signup.html">Sign up</a></p>
   </div>
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const response = await fetch('https://ipl-prediction-2iij.onrender.com/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.message);
-        // Redirect to the main website after successful login
-        window.location.href = 'home.html'; // Replace 'index.html' with your website's home page
-      } else {
-        alert(data.error);
-      }
-    });
-  </script>
+  document.getElementById('loginForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    const response = await fetch('https://ipl-prediction-1-vbsv.onrender.com/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username, password }),
+});
+
+
+    const data = await response.json();
+    if (response.ok) {
+      alert(data.message);
+      window.location.href = 'home.html';
+    } else {
+      alert(data.error || 'Login failed');
+    }
+  });
+</script>
 </body>
 </html>
