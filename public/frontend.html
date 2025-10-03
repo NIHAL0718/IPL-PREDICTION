@@ -226,8 +226,8 @@
     <input type="number" id="total_run_x" min="1" max="350" required>
 
     <div class="button-container">
-      <button type="submit" id="predictButton">Predict</button>
-      <button type="button" id="homeButton" onclick="window.location.href='home.html'">Home</button>
+      <button type="submit" id="predictButton" onclick="window.location.href='/frontend.html'">Predict</button>
+      <button type="button" id="homeButton" onclick="window.location.href='/home.html'">Home</button>
     </div>
   </form>
   
@@ -235,17 +235,17 @@
 
   <script>
     const teamLogos = {
-      "Chennai Super Kings": "CSK.png",
-      "Royal Challengers Bengaluru": "RCB.png",
-      "Punjab Kings": "KXIP.png",
-      "Mumbai Indians": "MI.png",
-      "Kolkata Knight Riders": "KKR.png",
-      "Rajasthan Royals": "RR.png",
-      "Sunrisers Hyderabad": "SRH.png",
-      "Delhi Capitals": "DC.jpg",
-      "Lucknow Super Giants": "LSG.png",
-      "Gujarat Titans": "GT.png"
-    };
+    "Chennai Super Kings": "/CSK.png",
+    "Royal Challengers Bengaluru": "/RCB.png",
+    "Punjab Kings": "/KXIP.png",
+    "Mumbai Indians": "/MI.png",
+    "Kolkata Knight Riders": "/KKR.png",
+    "Rajasthan Royals": "/RR.png",
+    "Sunrisers Hyderabad": "/SRH.png",
+    "Delhi Capitals": "/DC.jpg",
+    "Lucknow Super Giants": "/LSG.png",
+    "Gujarat Titans": "/GT.png"
+  };
 
     document.getElementById('predictionForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -291,7 +291,7 @@
       }
 
       try {
-        const response = await fetch('/api/predict', {
+        const response = await fetch('https://ipl-prediction-end1.onrender.com/predict', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)

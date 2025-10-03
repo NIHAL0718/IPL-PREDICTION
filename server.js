@@ -8,18 +8,21 @@ const bcrypt = require('bcryptjs'); // For password hashing
 const jwt = require('jsonwebtoken'); 
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 10000;
+
+// Log the port we're using
+console.log(`Server configured to listen on port ${PORT}`);
 
 app.use(express.static(path.join(__dirname,'public')));
 
-// MongoDB Configuration
-const MONGO_URI = 'mongodb://localhost:27017';
+// MongoDB Configuration - Using MongoDB Atlas
+const MONGO_URI = 'mongodb+srv://IPL_pred:Nihal2020@cluster0.wizo9.mongodb.net/ipldb?retryWrites=true&w=majority';
 const DATABASE_NAME = 'AMMAMOGUDU';
 const COLLECTION_NAME = 'cd';
 const COLLECTION_NAME_1="users";
 
 // Connect to MongoDB
-let db, collection,userCollection;
+let db, collection,usersCollection;
 MongoClient.connect(MONGO_URI)
   .then(client => {
     db = client.db(DATABASE_NAME);
@@ -34,7 +37,17 @@ MongoClient.connect(MONGO_URI)
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
+
+// Configure CORS - allow all origins for development
+app.use(cors({
+  origin: '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Add preflight OPTIONS handling for all routes
+app.options('*', cors());
 
 
 app.post('/signup', async (req, res) => {
@@ -111,8 +124,8 @@ app.post('/predict', async (req, res) => {
     await collection.insertOne(inputData);
     console.log('Data inserted into MongoDB:', inputData);
 
-    // Forward the request to Flask (ensure Flask is running and accessible at localhost:5000)
-    const flaskResponse = await axios.post('http://localhost:5000/predict', req.body);
+    // Forward the request to Flask API (deployed on render)
+    const flaskResponse = await axios.post('https://ipl-prediction-flask.onrender.com/predict', req.body);
 
     // Log Flask's response
     console.log('Response from Flask:', flaskResponse.data);
